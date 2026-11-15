@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/heartbeat.schema.json",
+  "title": "heartbeat (PC → ESP32)",
+  "description": "Alle 5 s; hub:down trennt Link weg von Hub weg (spec.md §4.3). Zeilenlänge ≤ 512 Byte wird auf NDJSON-Ebene erzwungen (check:protocol, Parser; ADR-0002). Additive Felder bleiben v1 (ADR-0002): unbekannte Felder sind erlaubt, werden aber gezählt und geloggt.",
+  "type": "object",
+  "required": [
+    "v",
+    "type",
+    "seq",
+    "ts",
+    "hub"
+  ],
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "type": {
+      "const": "heartbeat"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "ts": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$"
+    },
+    "hub": {
+      "enum": [
+        "up",
+        "down"
+      ]
+    },
+    "utc_offset_min": {
+      "type": "integer",
+      "minimum": -840,
+      "maximum": 840,
+      "description": "Minuten Ost von UTC am Companion (ADR-0007, T4.7); ts bleibt UTC. Optional, additiv v1."
+    }
+  }
+}

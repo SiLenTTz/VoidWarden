@@ -1,0 +1,233 @@
+{
+  "fw": 64,
+  "fh": 64,
+  "pivot": {
+    "x": 0.5,
+    "y": 1
+  },
+  "version": 2,
+  "markerColors": {
+    "core": "#FF00FF",
+    "mid": "#C000C0",
+    "dim": "#800080",
+    "note": "Eyes only; firmware recolors by state"
+  },
+  "bodyColors": [
+    "#070412",
+    "#160D22",
+    "#28153A",
+    "#3E2056",
+    "#593172",
+    "#76458D",
+    "#9455B5",
+    "#B774D9",
+    "#D09AEA",
+    "#F1D9FF",
+    "#7031B0",
+    "#9E46E0"
+  ],
+  "states": [
+    {
+      "state": "idle",
+      "frames": 7,
+      "duration_ms": 130
+    },
+    {
+      "state": "listening",
+      "frames": 5,
+      "duration_ms": 110
+    },
+    {
+      "state": "approval_pending",
+      "frames": 4,
+      "duration_ms": 150
+    },
+    {
+      "state": "executing",
+      "frames": 6,
+      "duration_ms": 90
+    },
+    {
+      "state": "success",
+      "frames": 3,
+      "duration_ms": 120
+    },
+    {
+      "state": "error",
+      "frames": 4,
+      "duration_ms": 90
+    },
+    {
+      "state": "offline",
+      "frames": 4,
+      "duration_ms": 200
+    }
+  ],
+  "frames": [
+    {
+      "state": "idle",
+      "index": 0,
+      "frame": 0
+    },
+    {
+      "state": "idle",
+      "index": 1,
+      "frame": 1
+    },
+    {
+      "state": "idle",
+      "index": 2,
+      "frame": 2
+    },
+    {
+      "state": "idle",
+      "index": 3,
+      "frame": 3
+    },
+    {
+      "state": "idle",
+      "index": 4,
+      "frame": 4
+    },
+    {
+      "state": "idle",
+      "index": 5,
+      "frame": 5
+    },
+    {
+      "state": "idle",
+      "index": 6,
+      "frame": 6
+    },
+    {
+      "state": "listening",
+      "index": 0,
+      "frame": 7
+    },
+    {
+      "state": "listening",
+      "index": 1,
+      "frame": 8
+    },
+    {
+      "state": "listening",
+      "index": 2,
+      "frame": 9
+    },
+    {
+      "state": "listening",
+      "index": 3,
+      "frame": 10
+    },
+    {
+      "state": "listening",
+      "index": 4,
+      "frame": 11
+    },
+    {
+      "state": "approval_pending",
+      "index": 0,
+      "frame": 12
+    },
+    {
+      "state": "approval_pending",
+      "index": 1,
+      "frame": 13
+    },
+    {
+      "state": "approval_pending",
+      "index": 2,
+      "frame": 14
+    },
+    {
+      "state": "approval_pending",
+      "index": 3,
+      "frame": 15
+    },
+    {
+      "state": "executing",
+      "index": 0,
+      "frame": 16
+    },
+    {
+      "state": "executing",
+      "index": 1,
+      "frame": 17
+    },
+    {
+      "state": "executing",
+      "index": 2,
+      "frame": 18
+    },
+    {
+      "state": "executing",
+      "index": 3,
+      "frame": 19
+    },
+    {
+      "state": "executing",
+      "index": 4,
+      "frame": 20
+    },
+    {
+      "state": "executing",
+      "index": 5,
+      "frame": 21
+    },
+    {
+      "state": "success",
+      "index": 0,
+      "frame": 22
+    },
+    {
+      "state": "success",
+      "index": 1,
+      "frame": 23
+    },
+    {
+      "state": "success",
+      "index": 2,
+      "frame": 24
+    },
+    {
+      "state": "error",
+      "index": 0,
+      "frame": 25
+    },
+    {
+      "state": "error",
+      "index": 1,
+      "frame": 26
+    },
+    {
+      "state": "error",
+      "index": 2,
+      "frame": 27
+    },
+    {
+      "state": "error",
+      "index": 3,
+      "frame": 28
+    },
+    {
+      "state": "offline",
+      "index": 0,
+      "frame": 29
+    },
+    {
+      "state": "offline",
+      "index": 1,
+      "frame": 30
+    },
+    {
+      "state": "offline",
+      "index": 2,
+      "frame": 31
+    },
+    {
+      "state": "offline",
+      "index": 3,
+      "frame": 32
+    }
+  ]
+}

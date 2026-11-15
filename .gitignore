@@ -1,0 +1,19 @@
+# data/ (Logs, Dedupe-Log, Messdaten) und echte Konfiguration nie einchecken (AGENTS.md).
+# voidwarden.config.example.json ist bewusst eingecheckt (spec.md §8).
+# Auch lokale Backups der Config (z. B. *.bak-*) bleiben draußen — private Pfade/Endpunkte.
+data/
+voidwarden.config.json*
+
+# Factory-Harness: lokale Tool-Metadaten (Forge-URL, absolute Pfade) — nichts fürs Repo.
+.factory/
+
+# Node
+node_modules/
+
+# PlatformIO
+.pio/
+
+# Factory-Harness (ephemere Anteile sind in .factory/.gitignore geregelt)
+# generiert von firmware/generate_fixture_list.py
+firmware/test/fixtures.list.h
+web/dist/

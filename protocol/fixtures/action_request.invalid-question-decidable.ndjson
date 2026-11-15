@@ -1,0 +1,1 @@
+{"v":1,"type":"action_request","seq":17,"action_id":"0e0f1e2e-3b4c-4d5e-8f9a-a1b2c3d4e5f6","kind":"question","agent_id":"nyx-session","class":"write","payload":{"title":"Welche Variante?","body":"x"},"timeout_s":120,"decidable":true}

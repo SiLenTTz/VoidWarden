@@ -1,0 +1,57 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/hello.schema.json",
+  "title": "hello (ESP32 → PC)",
+  "description": "Boot/Reconnect; löst snapshot aus (spec.md §4.2). Zeilenlänge ≤ 512 Byte wird auf NDJSON-Ebene erzwungen (check:protocol, Parser; ADR-0002). Additive Felder bleiben v1 (ADR-0002): unbekannte Felder sind erlaubt, werden aber gezählt und geloggt.",
+  "type": "object",
+  "required": [
+    "v",
+    "type",
+    "fw",
+    "proto",
+    "screen",
+    "reset_reason",
+    "heap_free"
+  ],
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "type": {
+      "const": "hello"
+    },
+    "fw": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$"
+    },
+    "proto": {
+      "const": 1
+    },
+    "screen": {
+      "type": "object",
+      "required": [
+        "w",
+        "h"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "w": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "h": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "reset_reason": {
+      "type": "string",
+      "minLength": 1
+    },
+    "heap_free": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

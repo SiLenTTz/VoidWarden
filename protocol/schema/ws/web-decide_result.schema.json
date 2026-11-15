@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/ws/web-decide_result.schema.json",
+  "title": "web decide_result (Companion → PWA, WS-Export EPIC-P10/ADR-0011)",
+  "description": "Antwort des Decide-Proxys an den sendenden Client. outcome == decided/conflict trägt hub_status, sonst null.",
+  "type": "object",
+  "required": ["type", "ts", "action_id", "outcome", "hub_status"],
+  "additionalProperties": false,
+  "properties": {
+    "type": { "const": "decide_result" },
+    "ts": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$" },
+    "action_id": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$" },
+    "outcome": {
+      "enum": ["decided", "conflict", "rejected_by_policy", "not_decidable", "already_decided", "error"]
+    },
+    "hub_status": { "type": ["null", "string"] }
+  }
+}

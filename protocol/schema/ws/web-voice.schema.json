@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/ws/web-voice.schema.json",
+  "title": "web voice cue (Companion → PWA, EPIC-P11 T11.5)",
+  "description": "Ankündigung eines Audio-Cues: die PWA lädt das WAV vom HTTP-Endpoint /voice/<id>. error=true = Synthese fehlgeschlagen (fail loud, kein Silent-Drop). Fixtures in protocol/fixtures/ws/.",
+  "type": "object",
+  "required": ["type", "ts", "id", "state", "phrase", "error"],
+  "additionalProperties": false,
+  "properties": {
+    "type": { "const": "voice" },
+    "ts": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$" },
+    "id": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[A-Za-z0-9_-]+$" },
+    "state": { "enum": ["idle", "listening", "approval_pending", "executing", "success", "error", "offline"] },
+    "phrase": { "type": "string", "minLength": 1, "maxLength": 200 },
+    "error": { "type": "boolean" }
+  }
+}

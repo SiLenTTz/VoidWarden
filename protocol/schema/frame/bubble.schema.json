@@ -1,0 +1,26 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/bubble.schema.json",
+  "title": "bubble (PC → ESP32)",
+  "description": "Sprechblase (ADR-0007/0008, EPIC-P8 T8.3). Text kommt aus dem Composer, nie aus einem LLM. Zeilenlänge ≤ 512 Byte (ADR-0002); title ≤ 40, body ≤ 160 (K5). hold_s 0 = bis Ack/Ablösung. Kritische Blasen (ack_required) sendet der Companion nach hello erneut (K7).",
+  "type": "object",
+  "required": ["v", "type", "seq", "bubble_id", "level", "payload", "hold_s", "ack_required"],
+  "properties": {
+    "v": { "const": 1 },
+    "type": { "const": "bubble" },
+    "seq": { "type": "integer", "minimum": 0 },
+    "bubble_id": { "type": "string", "minLength": 1, "maxLength": 36 },
+    "level": { "enum": ["info", "success", "error", "critical"] },
+    "payload": {
+      "type": "object",
+      "required": ["title", "body"],
+      "additionalProperties": false,
+      "properties": {
+        "title": { "type": "string", "minLength": 1, "maxLength": 40 },
+        "body": { "type": "string", "maxLength": 160 }
+      }
+    },
+    "hold_s": { "type": "integer", "minimum": 0, "maximum": 255 },
+    "ack_required": { "type": "boolean" }
+  }
+}

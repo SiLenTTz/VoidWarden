@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/action_response.schema.json",
+  "title": "action_response (ESP32 → PC)",
+  "description": "Touch-Entscheidung; Übersetzung zu approve|reject passiert im Companion (spec.md §4.2). Zeilenlänge ≤ 512 Byte wird auf NDJSON-Ebene erzwungen (check:protocol, Parser; ADR-0002). Additive Felder bleiben v1 (ADR-0002): unbekannte Felder sind erlaubt, werden aber gezählt und geloggt.",
+  "type": "object",
+  "required": [
+    "v",
+    "type",
+    "action_id",
+    "decision",
+    "ms"
+  ],
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "type": {
+      "const": "action_response"
+    },
+    "action_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "decision": {
+      "enum": [
+        "approve",
+        "decline"
+      ]
+    },
+    "ms": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

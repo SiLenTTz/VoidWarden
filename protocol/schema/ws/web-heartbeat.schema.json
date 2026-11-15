@@ -1,0 +1,13 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/ws/web-heartbeat.schema.json",
+  "title": "web heartbeat (Companion → PWA, WS-Export EPIC-P10/ADR-0011)",
+  "description": "Lebenszeichen analog P1; Client ohne Heartbeat im Timeout-Fenster zeigt Offline-UI.",
+  "type": "object",
+  "required": ["type", "ts"],
+  "additionalProperties": false,
+  "properties": {
+    "type": { "const": "heartbeat" },
+    "ts": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$" }
+  }
+}

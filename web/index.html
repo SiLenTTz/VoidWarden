@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <title>Nyx — VoidWarden</title>
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/nyx-icon-192.png" type="image/png" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <header>
+    <canvas id="nyx-header" width="64" height="64" title="Nyx"></canvas>
+    <h1>NYX</h1>
+    <span id="conn" class="down">offline</span> <button id="lang-toggle" class="hbtn" title="Sprache DE/EN">DE</button> <button id="sound-toggle" class="hbtn" title="Sound an/aus">🔊</button>
+  </header>
+  <main>
+    <div id="stage" title="Status der zuletzt aktiven Session">
+      <div id="aura" aria-hidden="true"></div>
+      <div id="nyx-wrap">
+        <canvas id="nyx-stage-canvas" width="192" height="192"></canvas>
+        <button type="button" id="attn" hidden title="Nyx braucht dich" aria-label="Nyx braucht dich">!</button>
+      </div>
+      <div id="stage-line" role="status" aria-live="polite">—</div>
+      <div id="stage-sentence"></div>
+    </div>
+    <div id="band">
+      <div id="sessions"></div>
+      <div id="bubble"><div class="b-title"></div><div class="b-body"></div></div>
+    </div>
+  </main>
+  <!-- BUG-0015: Freigabe-Popup (nicht Band) — nur nach Tippen auf #attn -->
+  <div id="take" hidden role="dialog" aria-modal="true" aria-labelledby="take-head">
+    <div id="take-card">
+      <button type="button" id="take-close" class="x" title="Schließen" aria-label="Schließen">×</button>
+      <div class="q" id="take-head"></div>
+      <div class="c" id="take-body"></div>
+      <div class="meta" id="take-meta"></div>
+      <div class="opts" id="take-opts" hidden></div>
+      <div class="result" id="take-result" hidden></div>
+      <div class="z" id="take-zones">
+        <button type="button" class="act" id="take-yes"><span>Freigeben</span></button>
+        <button type="button" class="act" id="take-no">Nein</button>
+      </div>
+      <button type="button" id="take-voice" hidden>🎤 Sprechen</button>
+    </div>
+  </div>
+  <dialog id="detail">
+    <h3 id="d-name"></h3>
+    <div class="full" id="d-text"></div>
+    <button id="d-close">Schließen</button>
+  </dialog>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

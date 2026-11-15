@@ -1,0 +1,15 @@
+{
+  "name": "@voidwarden/companion",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Companion-Service: Hub-Client und Serial-Bridge zum ESP32.",
+  "exports": {
+    ".": "./src/main.ts"
+  },
+  "dependencies": {
+    "@ancientvoid/contracts": "file:../../AncientVoid/packages/contracts",
+    "serialport": "^13.0.0",
+    "zod": "^4.6.5"
+  }
+}

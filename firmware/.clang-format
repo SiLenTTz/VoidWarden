@@ -1,0 +1,7 @@
+# VoidWarden Firmware — C++-Format (clang-format Teil von `npm run lint`).
+BasedOnStyle: Google
+Standard: c++17
+IndentWidth: 4
+ColumnLimit: 100
+AccessModifierOffset: -4
+SortIncludes: CaseInsensitive

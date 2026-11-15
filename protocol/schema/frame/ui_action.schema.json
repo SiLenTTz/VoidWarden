@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/ui_action.schema.json",
+  "title": "ui_action (ESP32 → PC)",
+  "description": "Touch-Aktion ohne Entscheidung (ADR-0007 §4, ADR-0009). Bewusste Ausnahme von ADR-0002: additionalProperties=false, damit weder `decision` noch `action_id` je durchrutschen (W9). Entscheidungen laufen ausschließlich über action_response. `ref` ist die Session-Kurz-ID bzw. bei bubble_ack die bubble_id. Zeilenlänge ≤ 512 Byte.",
+  "type": "object",
+  "required": ["v", "type", "action", "ms"],
+  "additionalProperties": false,
+  "properties": {
+    "v": { "const": 1 },
+    "type": { "const": "ui_action" },
+    "action": { "enum": ["status_tap", "focus_next", "bubble_ack"] },
+    "ref": { "type": "string", "minLength": 1, "maxLength": 36 },
+    "ms": { "type": "integer", "minimum": 0 }
+  }
+}

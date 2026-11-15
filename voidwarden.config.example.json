@@ -1,0 +1,46 @@
+{
+  "hub": {
+    "url": "http://127.0.0.1:7373",
+    "tokenFile": "data/display.token",
+    "decideTokenFile": "data/display-token.txt"
+  },
+  "serial": {
+    "path": "auto",
+    "baud": 921600
+  },
+  "heartbeat": {
+    "intervalMs": 5000,
+    "timeoutMs": 15000
+  },
+  "poll": {
+    "intervalMs": 1500
+  },
+  "web": {
+    "enabled": true,
+    "port": 8791,
+    "host": "127.0.0.1",
+    "optInAllInterfaces": false,
+    "decideTokenFile": "data/display-token.txt",
+    "staticDir": "web/dist"
+  },
+  "voice": {
+    "enabled": false,
+    "url": "http://100.74.58.126:18801/tts",
+    "speed": 1,
+    "pitchSemitones": 0,
+    "tempo": 1,
+    "timeoutMs": 120000,
+    "onEvents": ["state_change", "attention"]
+  },
+  "ui": {
+    "dimAfterS": 60,
+    "criticalActions": [],
+    "focusHoldS": 30,
+    "approveGesture": "hold",
+    "chatter": {
+      "enabled": true,
+      "minGapS": 90,
+      "jitterS": 60
+    }
+  }
+}

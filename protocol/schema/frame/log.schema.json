@@ -1,0 +1,44 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/log.schema.json",
+  "title": "log (ESP32 → PC)",
+  "description": "Firmware-Log, rate-limitiert (spec.md §4.2, observability.md). Zeilenlänge ≤ 512 Byte wird auf NDJSON-Ebene erzwungen (check:protocol, Parser; ADR-0002). Additive Felder bleiben v1 (ADR-0002): unbekannte Felder sind erlaubt, werden aber gezählt und geloggt.",
+  "type": "object",
+  "required": [
+    "v",
+    "type",
+    "level",
+    "msg"
+  ],
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "type": {
+      "const": "log"
+    },
+    "level": {
+      "enum": [
+        "debug",
+        "info",
+        "warn",
+        "error"
+      ]
+    },
+    "msg": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 200
+    },
+    "fields": {
+      "type": "object",
+      "additionalProperties": {
+        "type": [
+          "string",
+          "number",
+          "boolean"
+        ]
+      }
+    }
+  }
+}

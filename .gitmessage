@@ -1,0 +1,8 @@
+<Risiko> <Absicht> <bereich>: <Satz>
+
+# Notation: docs/commit-notation.md — geprüft von .githooks/commit-msg.
+# Risiko:  . sicher | ^ gate+tests | ! live belegt | @ Zwischenstand
+# Absicht: F Feature | B Bugfix | r Refactoring | d Doku | t Tests | e Tooling | a auto | m Merge
+# Bereich: companion | firmware | protocol | sim | assets | adr | docs | epic-pN | build
+#
+# Eine Verhaltensänderung pro Commit; Zusammenfassung ≤ 100 Zeichen.

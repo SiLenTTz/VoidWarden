@@ -1,0 +1,13 @@
+#!/usr/bin/env node
+// Checks the commit summary against docs/commit-notation.md.
+import { readFileSync } from "node:fs";
+import { checkSubject } from "../scripts/commit-notation.mjs";
+
+const subject = readFileSync(process.argv[2], "utf8")
+  .split("\n")
+  .find((line) => line.trim() && !line.startsWith("#"));
+const problem = subject === undefined ? "leere Commit-Nachricht" : checkSubject(subject.trim());
+if (problem) {
+  console.error(`commit-msg: ${problem}`);
+  process.exit(1);
+}

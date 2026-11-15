@@ -1,0 +1,4 @@
+{"type":"voice","ts":"2026-11-07T12:00:00.000Z","id":"","state":"executing","phrase":"x","error":false}
+{"type":"voice","ts":"kein-iso","id":"v1","state":"executing","phrase":"x","error":false}
+{"type":"voice","ts":"2026-11-07T12:00:00.000Z","id":"v1","state":"dreaming","phrase":"x","error":false}
+{"type":"voice","ts":"2026-11-07T12:00:00.000Z","id":"v1","state":"idle","phrase":"x","error":"nein","extra":1}

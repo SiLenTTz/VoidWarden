@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "types": ["node"]
+  },
+  "include": [
+    "companion/src/**/*.ts",
+    "companion/test/**/*.ts",
+    "protocol/src/**/*.ts",
+    "protocol/test/**/*.ts",
+    "tests/**/*.ts"
+  ]
+}

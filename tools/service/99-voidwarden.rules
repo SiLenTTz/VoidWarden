@@ -1,0 +1,3 @@
+# VoidWarden: CH340 des ESP32-2432S028R für den angemeldeten Benutzer freigeben (uaccess) und
+# zusätzlich auf Gruppe uucp legen. Nach dem Kopieren: udevadm control --reload && udevadm trigger
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", TAG+="uaccess", GROUP="uucp", MODE="0660", SYMLINK+="voidwarden"

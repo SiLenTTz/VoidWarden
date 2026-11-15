@@ -1,0 +1,16 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/ws/web-draft_result.schema.json",
+  "title": "web draft_result (Companion → PWA, Voice → Session-Entwurf)",
+  "description": "Antwort auf Client-draft: Text landet nur im Hub-Composer (ADR-0025), nie als Steer.",
+  "type": "object",
+  "required": ["type", "ts", "session_id", "outcome"],
+  "additionalProperties": false,
+  "properties": {
+    "type": { "const": "draft_result" },
+    "ts": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?Z$" },
+    "session_id": { "type": "string", "minLength": 1, "maxLength": 64 },
+    "outcome": { "enum": ["saved", "conflict", "not_available", "error"] },
+    "revision": { "type": ["null", "integer"], "minimum": 0 }
+  }
+}

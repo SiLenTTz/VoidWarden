@@ -1,0 +1,53 @@
+{
+  "name": "voidwarden",
+  "version": "1.0.0",
+  "private": true,
+  "description": "VoidWarden: Pixel-Art-Companion Nyx auf ESP32-Touch-Display für AncientVoid.",
+  "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "workspaces": [
+    "companion",
+    "protocol",
+    "web"
+  ],
+  "scripts": {
+    "prepare": "node scripts/setup-git.mjs",
+    "setup": "./setup.sh",
+    "test": "node --test \"tests/*.test.mjs\" \"protocol/test/*.test.ts\" \"companion/test/*.test.ts\" \"web/test/*.test.ts\"",
+    "lint": "eslint . && clang-format --dry-run --Werror $(find firmware/src firmware/test -name '*.cpp' -o -name '*.h' ! -name 'fixtures.list.h')",
+    "typecheck": "tsc -p . --noEmit",
+    "test:fw": "pio test -e native -d firmware",
+    "build:fw": "pio run -e esp32 -d firmware",
+    "check:protocol": "node scripts/check-protocol.mjs",
+    "check:assets": "node tools/assets/check-assets.mjs",
+    "check:commits": "node scripts/check-commits.mjs",
+    "test:hub": "node scripts/test-hub.mjs",
+    "test:hil": "node scripts/test-hil.mjs",
+    "messlauf:p2": "node scripts/messlauf-p2.mjs",
+    "sim": "node scripts/sim.mjs",
+    "companion": "node companion/src/run.ts",
+    "web:build": "npm --workspace @voidwarden/web run build",
+    "web:dev": "npm --workspace @voidwarden/web run dev",
+    "assets": "node tools/assets/generate_font.mjs && node tools/assets/pipeline.mjs",
+    "preview:nyx": "node scripts/preview-nyx.mjs",
+    "status": "node companion/src/cli.ts status",
+    "status:watch": "node companion/src/cli.ts status --watch",
+    "gate": "npm run typecheck && npm run lint && npm test && npm run test:fw && npm run build:fw && npm run check:protocol && npm run check:assets && npm run check:commits",
+    "touch:log": "node scripts/hil/touch-log.mjs",
+    "touch:calibrate": "node scripts/hil/touch-calibrate.mjs",
+    "hil:approval-demo": "node scripts/hil/approval-demo.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.5",
+    "@types/node": "^22.20.5",
+    "ajv": "^8.20.0",
+    "eslint": "^9.39.5",
+    "eslint-plugin-n": "^17.24.0",
+    "pngjs": "^7.0.0",
+    "typescript": "~5.9",
+    "typescript-eslint": "^8.72.1"
+  }
+}

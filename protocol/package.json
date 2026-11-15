@@ -1,0 +1,10 @@
+{
+  "name": "@voidwarden/protocol",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Link-Protokoll v1: JSON-Schemas und goldene Fixtures (Quelle der Wahrheit für Companion und Firmware).",
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

@@ -1,0 +1,3 @@
+{"type":"draft_result","ts":"2026-11-11T22:00:00.000Z","session_id":"","outcome":"saved","revision":1}
+{"type":"draft_result","ts":"not-iso","session_id":"s1","outcome":"saved","revision":1}
+{"type":"draft_result","ts":"2026-11-11T22:00:00.000Z","session_id":"s1","outcome":"steered","revision":1}

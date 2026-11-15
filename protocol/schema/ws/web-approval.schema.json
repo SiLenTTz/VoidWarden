@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/ws/web-approval.schema.json",
+  "title": "web approval (Companion → PWA, WS-Export EPIC-P10/ADR-0011)",
+  "description": "Älteste offene Freigabe oder null. Tool-Referenz für das Frontend (Maximum Length analog Anzeige-Regeln, ohne K5).",
+  "oneOf": [
+    { "type": "null" },
+    {
+      "type": "object",
+      "required": ["action_id", "kind", "agent_id", "class", "payload", "timeout_s", "decidable"],
+      "additionalProperties": false,
+      "properties": {
+        "action_id": { "type": "string", "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$" },
+        "kind": { "enum": ["approval", "question"] },
+        "agent_id": { "type": "string", "minLength": 1 },
+        "class": { "enum": ["read", "write", "destructive"] },
+        "payload": {
+          "type": "object",
+          "required": ["title", "body"],
+          "additionalProperties": false,
+          "properties": {
+            "title": { "type": "string", "minLength": 1, "maxLength": 200 },
+            "body": { "type": "string", "maxLength": 1000 }
+          }
+        },
+        "timeout_s": { "type": "number", "minimum": 0 },
+        "decidable": { "type": "boolean" }
+      },
+      "if": { "required": ["kind"], "properties": { "kind": { "const": "question" } } },
+      "then": { "properties": { "decidable": { "const": false } } }
+    }
+  ]
+}

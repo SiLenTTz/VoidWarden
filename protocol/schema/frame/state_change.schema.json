@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/state_change.schema.json",
+  "title": "state_change (PC → ESP32)",
+  "description": "Änderung des Nyx-Zustands (spec.md §4.1). Zeilenlänge ≤ 512 Byte wird auf NDJSON-Ebene erzwungen (check:protocol, Parser; ADR-0002). Additive Felder bleiben v1 (ADR-0002): unbekannte Felder sind erlaubt, werden aber gezählt und geloggt.",
+  "type": "object",
+  "required": [
+    "v",
+    "type",
+    "seq",
+    "state"
+  ],
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "type": {
+      "const": "state_change"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "state": {
+      "enum": [
+        "idle",
+        "listening",
+        "approval_pending",
+        "executing",
+        "success",
+        "error",
+        "offline"
+      ]
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "title",
+        "body"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "body": {
+          "type": "string",
+          "maxLength": 160
+        }
+      }
+    }
+  }
+}

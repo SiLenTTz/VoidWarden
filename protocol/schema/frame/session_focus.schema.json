@@ -1,0 +1,18 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/session_focus.schema.json",
+  "title": "session_focus (PC → ESP32)",
+  "description": "Fokussierte Session für Indikator und Tap-Status (ADR-0009). Der Fokus liegt im Companion; die Firmware hält ihn nicht (K7) und bekommt ihn nach hello/resync erneut. `ref` ist die Session-Kurz-ID, `name` der Anzeigename (ADR-0008 §6): Adapter + Kurz-ID, bei `titleSource=manual` der bereinigte Titel; nie Prompt-Auszug oder Aktivitätstext. idx ist 1-basiert und ≤ total. Zeilenlänge ≤ 512 Byte (ADR-0002).",
+  "type": "object",
+  "required": ["v", "type", "seq", "idx", "total", "ref", "name", "status"],
+  "properties": {
+    "v": { "const": 1 },
+    "type": { "const": "session_focus" },
+    "seq": { "type": "integer", "minimum": 0 },
+    "idx": { "type": "integer", "minimum": 1, "maximum": 255 },
+    "total": { "type": "integer", "minimum": 1, "maximum": 255 },
+    "ref": { "type": "string", "minLength": 1, "maxLength": 8 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 16 },
+    "status": { "enum": ["approval", "question", "error", "working", "idle", "other"] }
+  }
+}

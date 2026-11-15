@@ -1,0 +1,237 @@
+/*
+ * Nyx-Bühne (EPIC-P11 T11.1): 66/33-Split — oben die Bühne mit dem Nyx-Sprite,
+ * unten das scrollbare 2-Spalten-Kachelgrid. Kacheln zeigen nur Status-Punkt,
+ * Projektname und relative Zeit (Clean-Screen, Epic §1); alles andere lebt im
+ * Session-Dialog. Media-Query-Fallback 60/40 für kleine Screens (Premortem #4).
+ */
+/* T11.7: 5x7-Pixelfont 1:1 aus firmware/src/render/font5x7.h (generiert von
+ * tools/assets/extract-web-pixelfont.mjs, Pixel-Identität via check-pixelfont).
+ * Genutzt für Kachelnamen, Blase und Status — kein system-ui dort. */
+@font-face {
+  font-family: "VW Pixel 5x7";
+  src: url("/pixel-font.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+:root {
+  color-scheme: dark;
+  /* Gestaltungs-Tokens (EPIC-P13 §2): alle Farb-Literale der neuen Teile
+   * beziehen sich auf diese Variablen. Bestehende Literale werden nur
+   * ersetzt, wo eine Aufgabe die Regel ohnehin anfasst. */
+  --bg: #000000;          /* AMOLED-Schwarz, bleibt */
+  --line: #1c1c26;        /* Trennlinien */
+  --tile-line: #1e1e28;
+  --fg: #eef1f5;
+  --dim: #8d95a3;
+  --faint: #585f6c;
+  /* Bühne: Nyx-Kanon (Augenfarben aus spec.md §5, Atlas v2) */
+  --st-idle: #af72ff;
+  --st-listening: #45e4f7;
+  --st-executing: #45e4f7;
+  --st-approval: #ff9f43;
+  --st-question: #5cc8ff;
+  --st-success: #ffe38a;
+  --st-error: #ff526e;
+  --st-offline: #737185;
+  /* Kachelpunkte: gemeinsame Zustandssprache mit AncientVoid P43 (T13.4) */
+  --dot-work: #4fe0ab;
+  --dot-call: #ff9a3c;
+  --dot-ask: #5cc8ff;
+  --dot-err: #ff5c6a;
+  --dot-calm: #585f6c;
+  --take-bg: #0b0700;     /* Band bei Freigabe (T13.5) */
+  --ask-bg: #00090f;      /* Band bei Frage (T13.5) */
+  --spring: cubic-bezier(.2, .9, .25, 1.1);
+  --font-pixel: "VW Pixel 5x7", monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; height: 100dvh; background: #000; color: #e8e8e8;
+  font-family: system-ui, -apple-system, sans-serif;
+  /* BUG-0014: Kiosk — kein Pinch-/Doppel-Tap-Zoom, sonst driftet Nyx aus dem Frame */
+  touch-action: manipulation; overscroll-behavior: none; overflow: hidden; }
+body { padding: env(safe-area-inset-top) env(safe-area-inset-right)
+  env(safe-area-inset-bottom) env(safe-area-inset-left);
+  display: flex; flex-direction: column; }
+
+header { display: flex; align-items: center; gap: .6rem; padding: .7rem 1rem;
+  border-bottom: 1px solid #1a1a1a; }
+header canvas { width: 28px; height: 28px; image-rendering: pixelated; }
+header h1 { font-size: 1rem; font-weight: 600; letter-spacing: .04em; }
+#conn { margin-left: auto; font-size: .75rem; padding: .15rem .5rem;
+  border-radius: 999px; border: 1px solid #333; }
+#conn.up { color: #7dffa0; border-color: #2b5c3c; }
+#conn.down { color: #ff8a80; border-color: #5c2b2b; }
+/* T13.2: Kopfzeilen-Umschalter (früher Inline-Styles) — min. 44×44 px
+ * Trefferfläche (W15) */
+.hbtn { background: none; border: none; color: inherit; font-family: inherit;
+  cursor: pointer; min-width: 44px; min-height: 44px; padding: 0 4px;
+  display: inline-flex; align-items: center; justify-content: center; }
+#lang-toggle { font-size: .85rem; }
+#sound-toggle { font-size: 1rem; }
+
+/* 66/33-Bühne: main = Grid, Zeile 1 Bühne (66fr), Zeile 2 Grid-Band (34fr) */
+main { flex: 1; min-height: 0; min-width: 0; display: grid;
+  grid-template-rows: 66fr 34fr; }
+
+#stage { position: relative; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .6rem;
+  border-bottom: 1px solid var(--line); cursor: pointer;
+  --c: var(--st-idle); overflow: hidden; min-width: 0; }
+/* T13.1: Aura — Farbfläche hinter Nyx in der Zustandsfarbe. Atmet bei
+ * idle/listening/executing/success, steht still, wo auf den Menschen gewartet
+ * wird (approval/question/error), aus ohne Verbindung. Nur opacity/transform
+ * animiert (ein Compositor-Layer, Premortem #2). */
+#aura { position: absolute; inset: 0; pointer-events: none;
+  background: radial-gradient(closest-side at 50% 46%,
+    color-mix(in srgb, var(--c) 30%, transparent), transparent 72%);
+  transition: opacity .6s; will-change: opacity, transform; }
+#aura.breathe { animation: aura 4s ease-in-out infinite; }
+#aura.still { animation: none; opacity: 1; }
+#aura.off { animation: none; opacity: 0; }
+@keyframes aura { 50% { opacity: .55; transform: scale(.94); } }
+/* BUG-0014/0015: Nyx + Aufmerksamkeits-Badge neben dem Kopf */
+#nyx-wrap { position: relative; flex: 0 1 auto; align-self: center;
+  width: min(100%, 92vw); max-width: 100%; max-height: calc(100% - 3.2rem);
+  aspect-ratio: 1; }
+#nyx-stage-canvas { display: block; width: 100%; height: 100%;
+  image-rendering: pixelated; }
+#attn { position: absolute; top: 6%; right: 4%; z-index: 3;
+  width: 44px; height: 44px; border-radius: 50%; border: 2px solid var(--st-approval);
+  background: color-mix(in srgb, var(--st-approval) 25%, #000); color: var(--st-approval);
+  font-family: var(--font-pixel); font-size: 1.25rem; line-height: 1; cursor: pointer;
+  animation: attn-pulse 1.6s ease-in-out infinite; touch-action: manipulation; }
+#attn.ask { border-color: var(--st-question); color: var(--st-question);
+  background: color-mix(in srgb, var(--st-question) 25%, #000); }
+@keyframes attn-pulse { 50% { transform: scale(1.08); opacity: .85; } }
+@media (prefers-reduced-motion: reduce) { #attn { animation: none; } }
+/* T13.2: Zustandszeile (GROSS, Zustandsfarbe) + Nyx-Satz darunter */
+#stage-line { position: relative; font-family: var(--font-pixel); font-size: 1.15rem;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--c); text-align: center; }
+#stage-sentence { position: relative; font-family: var(--font-pixel); font-size: .8rem;
+  color: var(--dim); text-transform: uppercase; min-height: 1.4em; text-align: center;
+  padding: 0 1rem; }
+/* T13.2: #nyx-idle entfällt — der Verfall ist der Anzeigezustand „asleep“
+ * (RUHT / „Tippe für den letzten Status.“) auf derselben Bühne. */
+
+/* Grid-Band: Sprechblase liegt als deckungsgleiches Overlay ÜBER dem Band
+ * (EPIC-P11-Feedback R2: exakt die Grid-Position einnehmend, nicht frei über
+ * Nyx schwebend) — inset:0 macht sie flächengleich mit dem 33%-Band. */
+#band { display: flex; flex-direction: column; min-height: 0; min-width: 0; position: relative; }
+#bubble { display: none; position: absolute; inset: 0; z-index: 5;
+  overflow-y: auto; padding: .8rem 1rem; background: #000;
+  border-top: 1px solid #2a2a3a;
+  font-family: "VW Pixel 5x7", monospace; /* 5x7-Pixel-Stil */
+  font-size: .8rem; line-height: 1.6; color: #c5c5d5; }
+#bubble.visible { display: block; }
+#bubble .b-title { color: #d8d8e8; font-weight: 600; margin-bottom: .15rem; }
+
+/* BUG-0014: minmax(0,1fr) — sonst blähen nowrap-Titel die ganze main-Spalte
+ * (und damit die Nyx-Bühne) über den Viewport. */
+#sessions { flex: 1; min-height: 0; min-width: 0; overflow-y: auto; padding: .6rem 1rem 1rem;
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .6rem;
+  align-content: start; }
+/* T13.2: bei getrennter Verbindung bleibt der letzte Stand sichtbar,
+ * gedimmt auf 45 % (W6: letzte Projektion, kein schwarzer Schirm) */
+#sessions.dimmed { opacity: .45; }
+.tile { display: flex; flex-direction: column; gap: .3rem; padding: .7rem .8rem;
+  border: 1px solid #1e1e1e; border-radius: 12px; background: #060606;
+  text-decoration: none; color: inherit; min-width: 0; overflow: hidden; }
+.tile.attention { border-color: #5c4a2b; background: #100c05; }
+.tile .t-row { display: flex; align-items: center; gap: .4rem; }
+/* T13.4: Zustandspunkt in Farbe/Form/Bewegung (§4.3, gemeinsame Sprache mit
+ * AncientVoid P43): err eckig, ask/call gefüllt mit Hof, work gefüllt und
+ * atmet, done offener Ring, calm gefüllt grau. Lesbar auch ohne Farbe
+ * (Form), Bewegung nur bei „arbeitet“. 9 px Punktgröße. */
+.tile .dot { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.tile .dot.err { background: var(--dot-err); border-radius: 2px; }
+.tile .dot.ask { background: var(--dot-ask);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot-ask) 20%, transparent); }
+.tile .dot.call { background: var(--dot-call);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dot-call) 20%, transparent); }
+.tile .dot.work { background: var(--dot-work);
+  animation: dot-breathe 2.2s ease-in-out infinite; }
+.tile .dot.done { background: transparent; border: 2px solid var(--dot-call); }
+.tile .dot.calm { background: var(--dot-calm); }
+@keyframes dot-breathe { 50% { opacity: .45; } }
+.tile .name { font-weight: 600; font-size: .85rem; overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+  font-family: "VW Pixel 5x7", monospace; }
+/* T13.4: Aktivitätszeile statt nackter Zeit — Ellipse, wenn zu lang */
+.tile .act { font-size: .7rem; color: var(--dim); overflow: hidden;
+  text-overflow: ellipsis; white-space: nowrap;
+  font-family: "VW Pixel 5x7", monospace; }
+
+/* T13.2: #offline-Kasten entfällt — die Aussage steht in Zeile und Satz der
+ * Bühne (Anzeigezustand „ws_offline“). */
+
+/* BUG-0015: Freigabe als Modal-Popup (Badge #attn öffnet) — Vorrang vor Blase */
+#take { position: fixed; inset: 0; z-index: 20; display: flex;
+  align-items: center; justify-content: center; padding: 1rem;
+  background: rgba(0,0,0,.72); font-family: var(--font-pixel); text-transform: uppercase;
+  font-size: .75rem; touch-action: manipulation; }
+#take[hidden] { display: none !important; }
+#take-card { position: relative; width: min(22rem, 100%); max-height: min(70dvh, 28rem);
+  overflow-y: auto; background: var(--take-bg); border: 1px solid var(--st-approval);
+  border-radius: 14px; padding: 1rem .9rem .9rem; display: flex; flex-direction: column; gap: .55rem; }
+#take.ask #take-card { background: var(--ask-bg); border-color: var(--st-question); }
+#take .x { position: absolute; top: .35rem; right: .35rem; width: 44px; height: 44px;
+  border: none; background: transparent; color: var(--dim); font-size: 1.4rem; cursor: pointer; }
+#take .q { color: var(--st-approval); padding-right: 2rem; }
+#take.ask .q { color: var(--st-question); }
+#take .c { color: var(--fg); font-family: ui-monospace, monospace; text-transform: none;
+  font-size: .85rem; overflow-wrap: anywhere; white-space: pre-wrap;
+  max-height: 8em; overflow-y: auto; }
+#take .meta { color: var(--dim); font-size: .7rem; }
+#take .z { display: flex; flex-wrap: wrap; gap: .45rem; justify-content: flex-end; }
+#take .z.single { justify-content: stretch; }
+#take .act { flex: 0 1 auto; min-width: 6.5rem; min-height: 40px; padding: .45rem .7rem;
+  border-radius: 8px; border: 1px solid var(--st-approval); background: transparent;
+  color: var(--fg); font-family: var(--font-pixel); font-size: .75rem; text-transform: uppercase;
+  cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+#take.ask .act { border-color: var(--st-question); }
+#take #take-no { border-color: var(--tile-line); opacity: .9; }
+#take #take-voice { min-height: 40px; border-radius: 8px; border: 1px dashed var(--dim);
+  background: transparent; color: var(--dim); font-family: var(--font-pixel); font-size: .7rem;
+  text-transform: uppercase; cursor: pointer; touch-action: manipulation; }
+#take #take-voice.listening { border-color: var(--st-listening); color: var(--st-listening); }
+#take .opts { display: flex; flex-wrap: wrap; gap: .5rem; }
+#take .opts button { flex: 1 1 40%; padding: .5rem .3rem; border-color: var(--tile-line);
+  border-radius: 8px; background: transparent; color: var(--fg); font-family: var(--font-pixel);
+  min-height: 40px; text-transform: uppercase; }
+#take .opts button[aria-pressed="true"] { border-color: var(--st-question); background: #5cc8ff22; }
+#take button:disabled { opacity: .4; }
+#take .result { color: var(--st-approval); text-transform: none; }
+#take .opts:empty, #take .result[hidden], #take #take-voice[hidden] { display: none; }
+
+dialog { background: #0a0a0a; color: #eee; border: 1px solid #262626;
+  border-radius: 14px; max-width: 34rem; width: calc(100vw - 2rem); padding: 1rem; }
+dialog::backdrop { background: rgba(0,0,0,.7); }
+dialog h3 { font-size: 1rem; margin-bottom: .6rem; }
+dialog .full { white-space: pre-wrap; font-size: .9rem; color: #c5c5c5;
+  max-height: 60vh; overflow-y: auto; margin-bottom: .8rem; }
+dialog button { width: 100%; padding: .7rem; border-radius: 10px;
+  border: 1px solid #333; background: #111; color: #eee; font-size: .9rem; }
+
+/* Kleine Screens (Premortem #4): 60/40 statt 66/34 — Canvas bleibt bühnenfüllend */
+@media (max-height: 640px) {
+  main { grid-template-rows: 60fr 40fr; }
+}
+
+/* T13.1: Bewegung reduzieren — Aura steht als Standbild (AC-P13-5).
+ * T13.4: Bei getrennter Verbindung und bei reduzierter Bewegung atmet
+ * nichts (§4.3) — die Aussagen bleiben lesbar. */
+@media (prefers-reduced-motion: reduce) {
+  #aura.breathe { animation: none; opacity: .8; }
+  .tile .dot.work { animation: none; }
+}
+#sessions.dimmed .dot.work { animation: none; }
+
+
+/* T11.11 Typewriter-Cursor: blinkender Block hinter dem Getippten */
+.b-body.typing::after {
+  content: "▌";
+  animation: tw-blink 0.9s steps(1) infinite;
+  color: var(--nyx-accent, #935bb5);
+}
+@keyframes tw-blink { 50% { opacity: 0; } }

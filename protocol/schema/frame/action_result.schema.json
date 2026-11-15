@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/action_result.schema.json",
+  "title": "action_result (PC → ESP32)",
+  "description": "Wahrheit zur Entscheidung, vom Hub bestätigt (spec.md §4.1/§4.4). Zeilenlänge ≤ 512 Byte wird auf NDJSON-Ebene erzwungen (check:protocol, Parser; ADR-0002). Additive Felder bleiben v1 (ADR-0002): unbekannte Felder sind erlaubt, werden aber gezählt und geloggt.",
+  "type": "object",
+  "required": [
+    "v",
+    "type",
+    "seq",
+    "action_id",
+    "status"
+  ],
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "type": {
+      "const": "action_result"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "action_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "status": {
+      "enum": [
+        "approved",
+        "rejected",
+        "timed_out",
+        "stale",
+        "error"
+      ]
+    }
+  }
+}

@@ -1,0 +1,231 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/config.schema.json",
+  "title": "voidwarden.config.json",
+  "description": "Companion-Konfiguration (spec.md §8). Echte Datei ist git-ignored; nur Schema und Beispiel sind Repo-Inhalt. Tokens nur als Datei (Modus 600) referenzieren.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "hub",
+    "serial"
+  ],
+  "properties": {
+    "hub": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "url",
+        "tokenFile"
+      ],
+      "properties": {
+        "url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "description": "z. B. http://127.0.0.1:7373"
+        },
+        "tokenFile": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Pfad zur Token-Datei (Modus 600), nie der Token selbst."
+        },
+        "decideTokenFile": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Pfad zur Datei mit dem display:<name>-Token (Modus 600) für approvals.decide (EPIC-P3, AV-D1). Ohne dieses Feld bleibt der Companion read-only (ADR-0001)."
+        }
+      }
+    },
+    "serial": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Gerät (z. B. /dev/ttyUSB0) oder auto."
+        },
+        "baud": {
+          "type": "integer",
+          "minimum": 1200,
+          "default": 921600
+        }
+      }
+    },
+    "heartbeat": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "intervalMs": {
+          "type": "integer",
+          "minimum": 250,
+          "default": 5000
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1000,
+          "default": 15000
+        }
+      }
+    },
+    "poll": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "intervalMs": {
+          "type": "integer",
+          "minimum": 250,
+          "default": 1500
+        }
+      }
+    },
+    "web": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "EPIC-P10 T10.3: opt-in Web-Frontend (WS-Export + statische PWA-Auslieferung, ADR-0011).",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65535,
+          "default": 8791
+        },
+        "host": {
+          "type": "string",
+          "minLength": 1,
+          "default": "127.0.0.1",
+          "description": "Bindung: 127.0.0.1 (Default) oder LAN-Adresse. 0.0.0.0 nur mit optInAllInterfaces."
+        },
+        "optInAllInterfaces": {
+          "type": "boolean",
+          "default": false
+        },
+        "decideTokenFile": {
+          "type": "string",
+          "minLength": 1,
+          "description": "display:<name>-Token (Modus 600) für den Decide-Proxy; ohne ihn bleibt der Web-Client read-only."
+        },
+        "staticDir": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Verzeichnis der gebauten PWA (web/dist); fehlt es, serviert der Server nur den WS."
+        },
+        "idleTickerEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "P10-Retro: Idle-Ticker des Kiosk abschaltbar, ohne das ganze Web-Modul zu deaktivieren."
+        }
+      }
+    },
+    "ui": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dimAfterS": {
+          "type": "number",
+          "minimum": 0,
+          "default": 60
+        },
+        "criticalActions": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "default": []
+        },
+        "focusHoldS": {
+          "type": "number",
+          "minimum": 0,
+          "default": 30,
+          "description": "Rückfallzeit nach manuellem Session-Wechsel in Sekunden (ADR-0009)."
+        },
+        "approveGesture": {
+          "enum": ["tap", "hold"],
+          "description": "T13.5/ADR-0012 Punkt 6: Freigabe-Geste am Web-Kiosk (hold = 800 ms halten, Standard im Client, wenn der Schlüssel fehlt). Das Board liest den Schlüssel nicht."
+        },
+        "chatter": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Idle-Chatter (ADR-0009). minGapS >= 60 hält W12.",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "default": true
+            },
+            "minGapS": {
+              "type": "number",
+              "minimum": 60,
+              "default": 90
+            },
+            "jitterS": {
+              "type": "number",
+              "minimum": 0,
+              "default": 60
+            }
+          }
+        }
+      }
+    },
+    "voice": {
+      "type": "object",
+      "description": "EPIC-P11 T11.5: Nyx-Stimme - lokaler Kokoro-TTS + Ghost-Post-Processing (Pitch/Reverb/Tempo via FFmpeg).",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "url": {
+          "type": "string",
+          "pattern": "^https?://",
+          "default": "http://127.0.0.1:8797/tts",
+          "description": "Kokoro-Server (POST /tts)."
+        },
+        "speed": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 2,
+          "default": 1.05
+        },
+        "pitchSemitones": {
+          "type": "number",
+          "minimum": -12,
+          "maximum": 0,
+          "default": -2.5
+        },
+        "tempo": {
+          "type": "number",
+          "minimum": 0.5,
+          "maximum": 1.5,
+          "default": 0.95
+        },
+        "timeoutMs": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 120000,
+          "default": 30000
+        },
+        "onEvents": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "state_change",
+              "attention"
+            ]
+          },
+          "default": [
+            "state_change",
+            "attention"
+          ]
+        }
+      }
+    }
+  }
+}

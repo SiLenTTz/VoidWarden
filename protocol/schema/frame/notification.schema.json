@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/notification.schema.json",
+  "title": "notification (PC → ESP32)",
+  "description": "Ticker-Eintrag, Quelle /api/notifications (spec.md §4.1). Zeilenlänge ≤ 512 Byte wird auf NDJSON-Ebene erzwungen (check:protocol, Parser; ADR-0002). Additive Felder bleiben v1 (ADR-0002): unbekannte Felder sind erlaubt, werden aber gezählt und geloggt.",
+  "type": "object",
+  "required": [
+    "v",
+    "type",
+    "seq",
+    "agent_id",
+    "level",
+    "payload"
+  ],
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "type": {
+      "const": "notification"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "level": {
+      "enum": [
+        "info",
+        "success",
+        "warning",
+        "error"
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "title",
+        "body"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "body": {
+          "type": "string",
+          "maxLength": 160
+        }
+      }
+    }
+  }
+}

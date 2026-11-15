@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://voidwarden.dev/protocol/frame/action_request.schema.json",
+  "title": "action_request (PC → ESP32)",
+  "description": "Freigabe-Anfrage; decidable:false = nur anzeigen (spec.md §4.1, ADR-0001/0004). Zeilenlänge ≤ 512 Byte wird auf NDJSON-Ebene erzwungen (check:protocol, Parser; ADR-0002). Additive Felder bleiben v1 (ADR-0002): unbekannte Felder sind erlaubt, werden aber gezählt und geloggt.",
+  "type": "object",
+  "required": [
+    "v",
+    "type",
+    "seq",
+    "action_id",
+    "agent_id",
+    "class",
+    "payload",
+    "timeout_s",
+    "decidable"
+  ],
+  "properties": {
+    "v": {
+      "const": 1
+    },
+    "type": {
+      "const": "action_request"
+    },
+    "seq": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "action_id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+    },
+    "agent_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "class": {
+      "enum": [
+        "read",
+        "write",
+        "destructive"
+      ]
+    },
+    "payload": {
+      "type": "object",
+      "required": [
+        "title",
+        "body"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "body": {
+          "type": "string",
+          "maxLength": 160
+        }
+      }
+    },
+    "timeout_s": {
+      "type": "number",
+      "minimum": 0
+    },
+    "decidable": {
+      "type": "boolean"
+    },
+    "kind": {
+      "enum": [
+        "approval",
+        "question"
+      ],
+      "description": "Default approval. question = Rückfrage des Agents (AskUserQuestion): nur Anzeige, nie entscheidbar (ADR-0001, ADR-0009)."
+    }
+  },
+  "if": {
+    "required": [
+      "kind"
+    ],
+    "properties": {
+      "kind": {
+        "const": "question"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "decidable": {
+        "const": false
+      }
+    }
+  }
+}
